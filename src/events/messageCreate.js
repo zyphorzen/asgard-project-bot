@@ -130,11 +130,11 @@ export default {
     if (message.attachments.size > 1) {
       const ok = await sendDM(
         message.author,
-        "Eh, kirim 1 gambar aja ya, jangan sekaligus banyak 😅",
+        "Please send only **1 image** at a time 😅",
       );
       if (!ok)
         await message.reply({
-          content: "Kirim 1 gambar aja.",
+          content: "Please send only 1 image.",
           allowedMentions: { repliedUser: false },
         });
       return;
@@ -149,11 +149,11 @@ export default {
     ) {
       const ok = await sendDM(
         message.author,
-        "File-nya bukan gambar nih 🤔 Kirim screenshot-nya langsung ya (PNG/JPG).",
+        "That doesn't look like an image 🤔 Please send a screenshot directly (PNG/JPG).",
       );
       if (!ok)
         await message.reply({
-          content: "Kirim file gambar ya (PNG/JPG).",
+          content: "Please send an image file (PNG/JPG).",
           allowedMentions: { repliedUser: false },
         });
       return;
@@ -169,11 +169,11 @@ export default {
         const timeLeft = ((expiration - now) / 1000).toFixed(1);
         const ok = await sendDM(
           message.author,
-          `Sabar dulu ya, tunggu **${timeLeft} detik** lagi baru bisa upload ulang ⏳`,
+          `Please wait **${timeLeft} seconds** before uploading again ⏳`,
         );
         if (!ok)
           await message.reply({
-            content: `Tunggu ${timeLeft}s dulu.`,
+            content: `Please wait ${timeLeft}s before trying again.`,
             allowedMentions: { repliedUser: false },
           });
         return;
@@ -184,7 +184,7 @@ export default {
 
     const pingDM = await sendDM(
       message.author,
-      "Lagi ngecek screenshot-mu sebentar ya... 🔍 Biasanya ga lama.",
+      "Checking your screenshot... 🔍 This won't take long.",
     );
     if (!pingDM) await message.react("🔍").catch(() => {});
 
@@ -192,9 +192,7 @@ export default {
       const result = await Tesseract.recognize(
         attachment.url,
         "eng+ind+vie+chi_sim+chi_tra+kor+jpn+ara+tha+rus",
-        {
-          logger: () => {},
-        },
+        { logger: () => {} },
       );
 
       const rawText = result.data.text;
@@ -205,11 +203,11 @@ export default {
       if (!validation.valid) {
         const ok = await sendDM(
           message.author,
-          `❌ **Gambar tidak valid.**\n\nGambar yang lo kirim kayaknya bukan screenshot profil Gubernur RoK, atau kualitasnya kurang jelas.\n\n**Tips biar lolos:**\n• Screenshot langsung dari in-game\n• Pastikan **Profil Gubernur** keliatan penuh\n• Jangan crop, edit, atau kasih filter\n• Nama Alliance harus keliatan jelas\n\nKalau udah bener tapi masih error, hubungi admin ya 🙏`,
+          `❌ **Invalid image.**\n\nThe image you sent doesn't appear to be a valid RoK Governor Profile, or the quality is too low to read.\n\n**Tips to pass verification:**\n• Take a screenshot directly in-game\n• Make sure the full **Governor Profile** is visible\n• Do not crop, edit, or add filters\n• Your Alliance tag must be clearly visible\n\nIf you believe this is a mistake, please contact an admin 🙏`,
         );
         if (!ok)
           await message.reply({
-            content: "❌ Gambar tidak valid.",
+            content: "❌ Invalid image.",
             allowedMentions: { repliedUser: false },
           });
 
@@ -282,9 +280,6 @@ export default {
       const embed = new EmbedBuilder()
         .setTimestamp()
         .setFooter({ text: "ASGARD VERIFY SYSTEM" });
-      const profileLine = powerValue
-        ? `\n⚡ **Power:** ${formatNumber(powerValue)}`
-        : "";
 
       if (matchedAlliance) {
         const role = message.guild.roles.cache.find(
@@ -294,14 +289,14 @@ export default {
         if (!role) {
           await sendDM(
             message.author,
-            "Ada yang error nih — role-nya ga ketemu di server. Hubungi admin ya 🙏",
+            "Something went wrong — the role couldn't be found on this server. Please contact an admin 🙏",
           );
           return;
         }
         if (role.position >= message.guild.members.me.roles.highest.position) {
           await sendDM(
             message.author,
-            "Role-nya terlalu tinggi buat gue assign. Minta tolong admin ya 🙏",
+            "The role is too high for me to assign. Please contact an admin 🙏",
           );
           return;
         }
@@ -316,23 +311,21 @@ export default {
           ) {
             await member.roles.add(memberRole);
           } else {
-            console.warn(
-              "[Verify] Role 'Member' posisinya terlalu tinggi untuk di-assign bot.",
-            );
+            console.warn("[Verify] Role 'Member' is too high to assign.");
           }
         } else {
-          console.warn("[Verify] Role 'Member' tidak ditemukan di server.");
+          console.warn("[Verify] Role 'Member' not found in server.");
         }
 
         await member.roles.add(role);
 
         const ok = await sendDM(
           message.author,
-          `✅ **Verifikasi berhasil!**\n\nLo udah terkonfirmasi sebagai anggota **${matchedAlliance.name}** dan udah dapet role **${matchedAlliance.roleName}** + **Member** di server.${profileLine}\n\nSelamat datang! Kalau ada pertanyaan, feel free nanya ke admin 🎉`,
+          `✅ **Verification successful!**\n\nYou've been confirmed as a member of **${matchedAlliance.name}**.\n\n🎭 **Roles assigned:**\n• **Member**\n• **${matchedAlliance.roleName}**\n\nWelcome to the server! Feel free to ask an admin if you have any questions 🎉`,
         );
         if (!ok) {
           await message.reply({
-            content: `✅ Verified sebagai **${matchedAlliance.name}**! Aktifkan DM untuk info lengkap.`,
+            content: `✅ Verified as **${matchedAlliance.name}**! Roles assigned: **Member** + **${matchedAlliance.roleName}**. Enable DMs for full details.`,
             allowedMentions: { repliedUser: false },
           });
         }
@@ -343,7 +336,11 @@ export default {
           .setDescription(`User: ${member.user.tag} (${member.user.id})`)
           .addFields(
             { name: "Alliance", value: matchedAlliance.name, inline: true },
-            { name: "Role", value: `${role.name} + Member`, inline: true },
+            {
+              name: "Roles Assigned",
+              value: `Member + ${role.name}`,
+              inline: true,
+            },
             {
               name: "Power",
               value: powerValue ? formatNumber(powerValue) : "?",
@@ -363,12 +360,12 @@ export default {
 
         const ok = await sendDM(
           message.author,
-          `❌ **Verifikasi gagal.**\n\nAlliance yang terdeteksi di gambar lo ga cocok sama alliance manapun yang terdaftar.${profileLine}\n\nLo dikasih role **Guest** dulu.\n\n**Kemungkinan penyebab:**\n• Bukan anggota HoA / HoG / HoC\n• Tag alliance kepotong atau ga keliatan\n• Gambar blur / kualitas rendah\n\nCoba kirim ulang dengan screenshot yang lebih jelas, atau hubungi admin ya.`,
+          `❌ **Verification failed.**\n\nThe alliance detected in your screenshot doesn't match any registered alliance on this server.\n\n🎭 **Role assigned:** Guest\n\n**Possible reasons:**\n• You're not a member of HoA / HoG / HoC\n• The alliance tag is cut off or not visible\n• Image is blurry or low quality\n\nTry sending a clearer screenshot, or contact an admin if you think this is wrong.`,
         );
         if (!ok) {
           await message.reply({
             content:
-              "❌ Alliance tidak dikenali → **Guest**. Aktifkan DM untuk info lengkap.",
+              "❌ Alliance not recognized → **Guest**. Enable DMs for full details.",
             allowedMentions: { repliedUser: false },
           });
         }
@@ -378,7 +375,7 @@ export default {
           .setTitle("❌ VERIFICATION FAILED")
           .setDescription(`User: ${member.user.tag} (${member.user.id})`)
           .addFields(
-            { name: "Result", value: "Guest", inline: true },
+            { name: "Role Assigned", value: "Guest", inline: true },
             {
               name: "Power",
               value: powerValue ? formatNumber(powerValue) : "?",
@@ -397,11 +394,11 @@ export default {
       console.error("[Verify Error]", err);
       const ok = await sendDM(
         message.author,
-        "Duh, ada error waktu baca gambarnya 😓 Coba lagi bentar ya. Kalau masih error terus, hubungi admin.",
+        "Something went wrong while reading your image 😓 Please try again in a moment. If the issue persists, contact an admin.",
       );
       if (!ok)
         await message.reply({
-          content: "Error baca gambar, coba lagi.",
+          content: "Error reading image, please try again.",
           allowedMentions: { repliedUser: false },
         });
     }

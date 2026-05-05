@@ -1,17 +1,22 @@
 export default [
   {
     name: "HoA",
-    keywords: ["hoa", "houseofasgard", "asgard"],
+    keywords: ["hoa", "houseofasgard"],
     roleName: "House Of Asgard",
   },
   {
     name: "HoG",
-    keywords: ["hoG", "houseofgarden"],
+    keywords: ["hog", "houseofgarden"],
     roleName: "House Of Garden",
   },
   {
-    name: "HoD",
-    keywords: ["nusantara", "hod", "conqueror"],
-    roleName: "House Of Dawn",
+    name: "HoI",
+    keywords: ["hoi", "houseofinvictus"],
+    roleName: "House Of Invictus",
+  },
+  {
+    name: "HoC",
+    keywords: ["hoc", "nusantaraqonqueres"],
+    roleName: "Nusantara Qonqueres",
   },
 ];
