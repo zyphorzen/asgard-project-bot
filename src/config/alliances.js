@@ -10,8 +10,8 @@ export default [
     roleName: "House Of Garden",
   },
   {
-    name: "HoI",
-    keywords: ["hoi", "houseofinvictus"],
+    name: "HoL",
+    keywords: ["hol", "houseofinvitus"],
     roleName: "House Of Invictus",
   },
   {
